@@ -1,0 +1,38 @@
+/* Smooth image transition */
+.main-image img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    transition: opacity 0.5s ease-in-out;
+}
+
+/* Thumbnails styling */
+.thumbnails img {
+    width: 80px;
+    height: 80px;
+    margin: 5px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.thumbnails img.active {
+    border: 2px solid #007bff;
+    transform: scale(1.1);
+}
+
+.product-detail-container {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+}
+
+.image-gallery {
+    flex: 1;
+    overflow-y: auto;
+    height: 80vh;
+    scroll-behavior: smooth;
+}
+
+.product-info {
+    flex: 1;
+}
