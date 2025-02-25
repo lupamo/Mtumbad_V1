@@ -1,65 +1,75 @@
-import React, { useState, useEffect } from "react";
-import './Navbar.css';
-import { Search, ShoppingCart, Menu } from "lucide-react";
+import React from "react";
+import { Link, NavLink } from "react-router-dom";
+import { assets } from "../assets/assets";
 
 const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+	// menu setup
+	const [visible, setVisible] = React.useState(false);
+	
+	return (
+		<div className="flex items-center justify-between py-5 font-medium">
+			<img src={assets.logo} alt="logo" className="w-36" />
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  return(
-    <nav className={`fixed top-0 left-0 right-0 z-1000 transition-all duration-300 ${
-      isScrolled ? 'bg-white shadow-md' : 'bg-white'
-    }`}>
-      <div className="max-w-[1200px] mx-2 my-2">
-        <div className="flex justify-between h-8 navbar-container">
-          
-          {/* Hamburger Menu Button - Only visible on mobile */}
-          <button 
-            className="mobile-menu-btn"
-            onClick={toggleMenu}
-          >
-            <Menu size={30} />
-          </button>
-
-          {/* Logo */}
-          <div className="flex-shrink-0">
-            <h3 className="text-2xl font-bold">Mtu-mbad</h3>
-          </div>
-
-          {/* Navigation Links */}
-          <div className={`nav-links ${isMenuOpen ? 'show' : ''}`}>
-            <a href="/">HOME</a>
-            <a href="/about">ABOUT US</a>
-            <a href="/shop">SHOP</a>
-            <a href="/contact">CONTACT</a>
-          </div>
-
-          {/* Right Side Icons */}
-          <div className="flex">
-            <button className="text-gray-800 hover:text-gray-600 carts">
-              <Search size={30} />
-            </button>
-            <button className="text-gray-800 hover:text-gray-600 flex items-center carts">
-              <ShoppingCart size={30} />
-              <span className="ml-1">0</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </nav>
-  );
-};
+			<ul className="hidden sm:flex gap-5 text-sm text-gray-700">
+				<NavLink to='/' className='flex flex-col items-center gap-1'>
+					<p>HOME</p>
+					<hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden"/>
+				</NavLink>
+				<NavLink to='/about' className='flex flex-col items-center gap-1'>
+					<p>ABOUT</p>
+					<hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden"/>
+				</NavLink>
+				<NavLink to='/collection' className='flex flex-col items-center gap-1'>
+					<p>COLLECTION</p>
+					<hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden"/>
+				</NavLink>
+				<NavLink to='/contact' className='flex flex-col items-center gap-1'>
+					<p>CONTACT</p>
+					<hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden"/>
+				</NavLink>
+			</ul>
+			<div className="flex items-center gap-6">
+				<img src={assets.search_icon} className='w-5 cursor-pointer' alt="search" />
+				<div className="group relative">
+					<img src={assets.profile} className='w-5 cursor-pointer' alt="profile" />
+					<div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4">
+						<div className="flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 rounded">
+							<p className="cursor-pointer hover:text-black">My Profile</p>
+							<p className="cursor-pointer hover:text-black">Orders</p>
+							<p className="cursor-pointer hover:text-black">Logout</p>
+						</div>
+					</div>
+				</div>
+				<Link to='/cart' className="relative">
+					<img src={assets.cart} className='w-5 min-w-5 cursor-pointer' alt="cart" />
+					<p className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[8px]">10</p>
+				</Link>
+				<img onClick={()=>setVisible(true)} src={assets.menu} alt="Menu" className="w-5 cursor pointer sm:hidden" />
+			</div>
+			{/* side bar menu on small screen */}
+			<div className={`absolute top-0 right-0 bottom-0 overflow-hidden bg-white transition-all ${visible ? 'w-full':'w-0'}`}>
+				<div className="flex flex-col text-gray-600">
+					<div onClick={() => setVisible(false)} className="flex items-center gap-4 p-3 cursor-pointer">
+						<img src={assets.drop} alt="back" className="h-5 rotate-90" />
+						<p>Back</p>
+					</div>
+					<NavLink onClick={() => setVisible(false)} to='/' className='py-2 pl-6 border'>
+						<p>HOME</p>
+					</NavLink>
+					<NavLink onClick={() => setVisible(false)} to='/about' className='py-2 pl-6 border'>
+						<p>ABOUT</p>
+					</NavLink>
+					<NavLink onClick={() => setVisible(false)} to='/collection' className='py-2 pl-6 border'>
+						<p>COLLECTION</p>
+					</NavLink>
+					<NavLink onClick={() => setVisible(false)} to='/contact' className='py-2 pl-6 border'>
+						<p>CONTACT</p>
+					</NavLink>
+				</div>
+			</div>
+		</div>
+	);
+}
 
 export default Navbar;
