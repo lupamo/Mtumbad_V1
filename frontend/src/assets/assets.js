@@ -20,9 +20,12 @@ import style3 from './style3.jpg'
 import style4 from './style4.jpg'
 import style5 from './style5.jpg'
 import style6 from './style6.jpg'
-
+import logo from './logo.png'
+import search_icon from './search_icon.png'
 import cart from './cart.png'
 import profile from './profile.png'
+import menu from './menu.png'
+import drop from './drop.png'
 
 export const assets = {
 	img_1,
@@ -30,6 +33,10 @@ export const assets = {
 	img_3,
 	img_4,
 	img_5,
+	search_icon,
+	menu,
+	drop,
+	logo,
 	img_6,
 	img_7,
 	img_8,
