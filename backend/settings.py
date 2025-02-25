@@ -4,4 +4,6 @@ import os
 load_dotenv()
 
 
-DATABASE_URL = f"mysql+mysqldb://{os.getenv('DATABASE_USER')}:{os.getenv('DATABASE_PASSWORD')}@{os.getenv('DATABASE_HOST')}/{os.getenv('DATABASE_NAME')}"
+DATABASE_URL = os.getenv('DATABASE_URL')
+SUPABASE_URL = os.getenv('SUPABASE_URL')
+SUPABASE_API_KEY = os.getenv('SUPABASE_API_KEY')
