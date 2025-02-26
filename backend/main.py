@@ -6,12 +6,20 @@ from utils import supabase_config
 from database.connection import Base
 from products.views import product_router
 from categories.views import category_router
+from cart.views import cart_router
+from users.views import users_router
+from auth.views import auth_router
+from orders.views import order_router
 
 
 app = FastAPI()
 
+app.include_router(auth_router)
+app.include_router(users_router)
 app.include_router(product_router)
 app.include_router(category_router)
+app.include_router(cart_router)
+app.include_router(order_router)
 
 try:
   engine.connect()

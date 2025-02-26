@@ -49,4 +49,5 @@ async def update_product(product_id: str, product: ProductCreate, session: Sessi
     product.subcategory_id = product.subcategory_id
     product.sizes = product.sizes
     session.commit()
+    session.refresh(product)
     return product
