@@ -49,7 +49,7 @@ import drop from './drop.png'
 import box from './box.png'
 import bike from './bike.png'
 import kenya from './kenya.png'
-
+import cross from './cross.png'
 export const assets = {
 	img_1,
 	img_2,
@@ -58,6 +58,7 @@ export const assets = {
 	img_5,
 	search_icon,
 	menu,
+	cross,
 	drop,
 	box,
 	kenya,
@@ -87,37 +88,37 @@ export const assets = {
 export const products = [
 	{
 		id: "1",
-		name: 'High quality T-shirt',
+		name: 'High quality Top T-shirt',
 		description: 'High quality T-shirt with a perfect fit',
 		price: 100,
 		image: [img_1, img_2, img_3],
 		category:'Men',
 		subcategory: 'bottomWear',
-		sizes: ['S', 'M', 'L', 'XL'],
+		sizes: ['S', 'L', 'XL'],
 		date: 1745641646,
 		bestSelling: true,
 	},
 	{
 		id: "4545",
-		name: 'High quality T-shirt',
+		name: 'High quality Nice T-shirt',
 		description: 'High quality T-shirt with a perfect fit',
 		price: 120,
 		image: [style1, img_4, img_3],
 		category:'Men',
 		subcategory: 'bottomWear',
-		sizes: ['S', 'M', 'L', 'XL'],
+		sizes: ['S', 'XL'],
 		date: 1745641646,
 		bestSelling: true,
 	},
 	{
 		id: "182",
-		name: 'High quality T-shirt',
+		name: 'High quality New T-shirt',
 		description: 'High quality T-shirt with a perfect fit',
 		price: 250,
 		image: [img_4, img_6, img_5],
 		category:'Men',
 		subcategory: 'bottomWear',
-		sizes: ['S', 'M', 'L', 'XL'],
+		sizes: ['S', 'M'],
 		date: 1745641646,
 		bestSelling: true,
 	},
@@ -178,7 +179,7 @@ export const products = [
 		image: [img_21, img_6, img_1],
 		category:'Kids',
 		subcategory: 'bottomWear',
-		sizes: ['S', 'M', 'L', 'XL'],
+		sizes: ['S'],
 		date: 1745641646,
 		bestSelling: false,
 	}
@@ -203,7 +204,7 @@ export const products = [
 		image: [img_15, img_35, img_21],
 		category:'Women',
 		subcategory: 'topWear',
-		sizes: ['S', 'M', 'L', 'XL'],
+		sizes: ['S',  'L', 'XL'],
 		date: 1745641646,
 		bestSelling: false,
 	},
@@ -215,7 +216,7 @@ export const products = [
 		image: [style3, img_25, img_11],
 		category:'Men',
 		subcategory: 'topWear',
-		sizes: ['S', 'M', 'L', 'XL'],
+		sizes: ['M', 'L', 'XL'],
 		date: 1745641646,
 		bestSelling: false,
 	},

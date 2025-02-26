@@ -7,8 +7,13 @@ const ProductItem = ({ id, image, name, price }) => {
 
 	const {currency} = useContext(ShopContext);
 
+	const handleClick = () => {
+		// Scroll to top when link is clicked
+		window.scrollTo(0, 0);
+	  };
+	
 	return (
-		<Link to={`/product/${id}`} className="text-gray-700 cursor-pointer flex flex-col h-full w-full">
+		<Link to={`/product/${id}`} className="text-gray-700 cursor-pointer flex flex-col h-full w-full" onClick={handleClick}>
 			<div className='overflow-hidden flex-shrink-0 h-55'>
 				<img src={image[0]} alt={name} className='hover:scale-110 transition ease-in-out w-full ' />
 			</div>
