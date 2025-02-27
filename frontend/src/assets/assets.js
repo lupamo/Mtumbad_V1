@@ -50,6 +50,8 @@ import box from './box.png'
 import bike from './bike.png'
 import kenya from './kenya.png'
 import cross from './cross.png'
+import bin from './delete.png'
+
 export const assets = {
 	img_1,
 	img_2,
@@ -58,6 +60,7 @@ export const assets = {
 	img_5,
 	search_icon,
 	menu,
+	bin,
 	cross,
 	drop,
 	box,
