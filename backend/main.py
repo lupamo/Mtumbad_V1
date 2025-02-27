@@ -10,7 +10,7 @@ from cart.views import cart_router
 from users.views import users_router
 from auth.views import auth_router
 from orders.views import order_router
-from utils.daraja import daraja
+# from utils.daraja import daraja
 
 
 app = FastAPI()

@@ -28,7 +28,7 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 from database.connection import Base
 from categories.models import Category
-from products.models import Product
+from products.models import Product, ProductSize
 from users.models import User
 from cart.models import Cart
 from orders.models import Order

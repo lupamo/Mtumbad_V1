@@ -9,6 +9,7 @@ class Cart(BaseModel):
     user_id = Column(String(256), ForeignKey("users.id"), nullable=False)
     product_id = Column(String(256), ForeignKey("products.id"), nullable=False)
     quantity = Column(Integer, nullable=False)
+    size = Column(String)
 
     # relationships
     product = relationship("Product", back_populates="carts")

@@ -5,3 +5,4 @@ from datetime import datetime
 class CartCreate(BaseModel):
     product_id: str
     quantity: int
+    size: str
