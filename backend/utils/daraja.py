@@ -90,8 +90,9 @@ class Daraja:
         response = self.send(url, "POST", data)
         return response
     
-    def query_stk_status(self, shortcode: str, checkout_request_id: str):
+    def query_stk_status(self, shortcode: str):
         url = f"{self.base_url}/mpesa/stkpushquery/v1/query"
+        checkout_request_id = self.lipa_na_mpesa_online(shortcode).json().get("CheckoutRequestID")
         data = {
             "BusinessShortCode": shortcode,
             "Password": self.lipa_na_mpesa_password(shortcode, settings.DARAJA_PASSKEY),

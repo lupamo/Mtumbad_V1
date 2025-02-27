@@ -4,6 +4,8 @@ from utils.errors import HTTPError
 from .models import Order, OrderItem
 from database.connection import get_session
 from cart.models import Cart
+from fastapi.security import HTTPBasicCredentials
+from auth.auth import security, AuthHandler
 
 
 order_router = APIRouter(prefix="/orders", tags=["Orders"])
@@ -20,9 +22,13 @@ async def get_order(order_id: str, session: Session = Depends(get_session)):
         raise HTTPError.not_found("Order not found")
     return order
 
-@order_router.post("/{user_id}/checkout")
-async def checkout(user_id: str, session: Session = Depends(get_session)):
-    cart_items = session.query(Cart).filter(Cart.user_id == user_id).all()
+@order_router.post("/checkout")
+async def checkout(
+    credentials: HTTPBasicCredentials = Depends(security),
+    session: Session = Depends(get_session)
+    ):
+    user = AuthHandler().get_current_user(session, credentials.credentials)
+    cart_items = session.query(Cart).filter(Cart.user_id == user.id).all()
 
     if not cart_items:
         raise HTTPError.bad_request("Cart is empty")
@@ -31,7 +37,7 @@ async def checkout(user_id: str, session: Session = Depends(get_session)):
     total_price = sum(item.product.price * item.quantity for item in cart_items)
 
     # Create an order
-    new_order = Order(user_id=user_id, total=total_price)
+    new_order = Order(user_id=user.id, total=total_price)
     session.add(new_order)
     session.commit()  # Save order first to generate order_id
 
@@ -46,7 +52,7 @@ async def checkout(user_id: str, session: Session = Depends(get_session)):
         session.add(order_item)
     
     # Clear cart after checkout
-    session.query(Cart).filter(Cart.user_id == user_id).delete()
+    session.query(Cart).filter(Cart.user_id == user.id).delete()
 
     session.commit()
     return {"message": "Checkout successful", "order_id": new_order.id}
