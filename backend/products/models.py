@@ -9,7 +9,6 @@ class Product(BaseModel):
     name = Column(String(256), nullable=False)
     description = Column(Text, nullable=False)
     price = Column(Float, nullable=False)
-    image_urls = Column(String(256))
     bestselling = Column(Boolean, default=False)
     category_id = Column(String(256), ForeignKey("categories.id"))
     subcategory_id = Column(String(256), ForeignKey("categories.id"))
@@ -19,6 +18,7 @@ class Product(BaseModel):
     subcategory_id = Column(String, ForeignKey("subcategories.id"), nullable=False)
 
     # Relationship with Subcategory
+    products_images = relationship("ProductImage", back_populates="product", cascade="all, delete-orphan")
     subcategory = relationship("Subcategory", back_populates="products")
     carts = relationship("Cart", back_populates="product")
     order_items = relationship("OrderItem", back_populates="product")
@@ -33,3 +33,12 @@ class ProductSize(BaseModel):
     stock = Column(Integer, default=0)
 
     product = relationship("Product", back_populates="sizes")
+
+
+class ProductImage(BaseModel):
+    __tablename__ = "product_images"
+
+    product_id = Column(String(256), ForeignKey("products.id"), nullable=False)
+    image_url = Column(String(256), nullable=False)
+
+    product = relationship("Product", back_populates="products_images")

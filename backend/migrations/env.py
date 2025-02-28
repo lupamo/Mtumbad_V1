@@ -28,10 +28,11 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 from database.connection import Base
 from categories.models import Category
-from products.models import Product, ProductSize
+from products.models import Product, ProductSize, ProductImage
 from users.models import User
 from cart.models import Cart
 from orders.models import Order
+from auth.models import RefreshToken
 
 target_metadata = Base.metadata
 

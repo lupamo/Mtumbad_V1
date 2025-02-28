@@ -26,8 +26,15 @@ class AuthHandler:
         to_encode = data.copy()
         expire = datetime.utcnow() + timedelta(minutes=self.access_token_expire_minutes)
         to_encode.update({"exp": expire})
-        encoded_jwt = jwt.encode(to_encode, self.jwt_secret, algorithm=self.algorithm)
-        return encoded_jwt
+        access_token = jwt.encode(to_encode, self.jwt_secret, algorithm=self.algorithm)
+        return access_token
+    
+    def create_refresh_token(self, data: dict):
+        to_encode = data.copy()
+        expire = datetime.utcnow() + timedelta(days=7)
+        to_encode.update({"exp": expire})
+        refresh_token = jwt.encode(to_encode, self.jwt_secret, algorithm=self.algorithm)
+        return refresh_token
         
     def verify_token(self, token: str):
         try:

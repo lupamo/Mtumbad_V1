@@ -17,3 +17,11 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv('JWT_EXPIRES_IN'))
 CONSUMER_KEY = os.getenv('SAFARICOM_CONSUMER_KEY')
 CONSUMER_SECRET = os.getenv('SAFARICOM_CONSUMER_SECRET')
 DARAJA_PASSKEY = os.getenv('SAFARICOM_PASSKEY')
+
+ALLOWED_MIME_TYPES = [
+    "image/png",
+    "image/jpeg",
+    "image/jpg",
+    "image/gif",
+    "image/webp",
+]
