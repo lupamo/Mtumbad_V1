@@ -17,3 +17,4 @@ class User(BaseModel):
     # Relationships
     carts = relationship("Cart", back_populates="user")
     orders = relationship("Order", back_populates="user")
+    refresh_tokens = relationship("RefreshToken", back_populates="user")
