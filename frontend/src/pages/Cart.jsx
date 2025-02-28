@@ -1,10 +1,12 @@
 import React, { useEffect, useContext } from "react";
-import { ShopContext } from "../context/shopContext";
+import { ShopContext } from "../context/ShopContext";
 import Title from "../components/Title";
 import { assets } from "../assets/assets";
+import CartTotal from "../components/CartTotal";
+
 
 const Cart = () => {
-	const { products, currency, cartItems, updateQuantity } = useContext(ShopContext);
+	const { products, currency, cartItems, updateQuantity, navigate} = useContext(ShopContext);
 	const [cartData, setCartData] = React.useState([]);
 
 	useEffect(() => {
@@ -41,7 +43,7 @@ const Cart = () => {
 										<p className="text-xs sm:text-lg font-medium">{productData.name}</p>
 										<div className="flex-col items-center gap-3 mt-2">
 											<p>{currency}{productData.price}</p>
-											<p className="px-2 w-8 mt-2 sm:px-3 sm:py-1 border bg-slate-50">{item.size}</p>
+											<p className="center px-2 w-8 mt-2  sm:py-1 border bg-slate-50">{item.size}</p>
 										</div>
 									</div>
 								</div>
@@ -52,8 +54,18 @@ const Cart = () => {
 					})
 				}
 			</div>
+			<div className="flex justify-end my-20">
+				<div className="w-full sm:w-[450px]">
+					<CartTotal />
+					<div className="w-full text-end">
+						<button onClick={() => navigate('/place-order')} className="bg-black text-white text-sm my-8 px-8 py-3" >
+							CHECKOUT
+						</button>
+					</div>
+				</div>
+			</div>
 		</div>
-	);
+	)
 }
 
 export default Cart;

@@ -51,6 +51,12 @@ import bike from './bike.png'
 import kenya from './kenya.png'
 import cross from './cross.png'
 import bin from './delete.png'
+import mpesa from './mpesa.png'
+import paypal from './paypal.png'
+import add from './add.png'
+import upload from './upload.png'
+import orders from './orders.png'
+import list from './list.png'
 
 export const assets = {
 	img_1,
@@ -59,13 +65,19 @@ export const assets = {
 	img_4,
 	img_5,
 	search_icon,
+	mpesa,
+	paypal,
+	list,
+	orders,
 	menu,
 	bin,
+	add,
 	cross,
 	drop,
 	box,
 	kenya,
 	bike,
+	upload,
 	logo,
 	img_6,
 	img_7,
