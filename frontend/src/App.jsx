@@ -13,6 +13,10 @@ import PlaceOrder from './pages/PlaceOrder';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer.';
 import Searchbar from './components/Searchbar';
+import AdminLogin from './pages/AdminLogin';
+import Admin from './pages/Admin';
+
+
 import { ToastContainer, toast } from 'react-toastify';
 
 function App() {
@@ -31,7 +35,9 @@ function App() {
         <Route path='/orders' element={<Orders />} />
         <Route path='/cart' element={<Cart />} />
         <Route path='/login' element={<Login />} />
+        <Route path='/admin-login' element={<AdminLogin />} />
         <Route path='/place-order' element={<PlaceOrder />} />
+        <Route path="/admin/" element={<Admin />} />
       </Routes>
       <Footer />
     </div>
