@@ -15,9 +15,8 @@ import Footer from './components/Footer.';
 import Searchbar from './components/Searchbar';
 import AdminLogin from './pages/AdminLogin';
 import Admin from './pages/Admin';
-
-
 import { ToastContainer, toast } from 'react-toastify';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
 
@@ -33,10 +32,13 @@ function App() {
         <Route path='/contact' element={<Contact />} />
         <Route path='/product/:productId' element={<Product />} />
         <Route path='/orders' element={<Orders />} />
-        <Route path='/cart' element={<Cart />} />
+        <Route 
+            path="/cart" 
+            element={<Cart />} 
+          />
         <Route path='/login' element={<Login />} />
         <Route path='/admin-login' element={<AdminLogin />} />
-        <Route path='/place-order' element={<PlaceOrder />} />
+        <Route path='/place-order' element={<ProtectedRoute><PlaceOrder /></ProtectedRoute>} />
         <Route path="/admin/" element={<Admin />} />
       </Routes>
       <Footer />
