@@ -3,6 +3,10 @@ import { products } from '../assets/assets';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
+// API base URL - adjust to match your FastAPI server
+const API_URL = 'http://localhost:8001';
+
+
 export const ShopContext = createContext();
 
 const ShopContextProvider = (props) => {
@@ -12,6 +16,7 @@ const ShopContextProvider = (props) => {
   const [showSearch, setShowSearch] = useState(false);
   const [cartItems, setCartItems] = useState({});
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
 
   // Load cart items from localStorage when component mounts
@@ -29,29 +34,142 @@ const ShopContextProvider = (props) => {
   }, []);
 
   // Check if user is authenticated
-  const checkAuthStatus = () => {
+  const checkAuthStatus = async () => {
     const token = localStorage.getItem('authtoken') || sessionStorage.getItem('authtoken');
-    setIsAuthenticated(!!token);
+    const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail');
+    
+    if (token) {
+      setIsAuthenticated(true);
+      if (userEmail) {
+        setCurrentUser({ email: userEmail });
+      } else {
+        setCurrentUser({ email: "User" });
+      }
+    } else {
+      setIsAuthenticated(false);
+      setCurrentUser(null);
+    }
+  };
+
+  // Handle user registration
+  const register = async (userData) => {
+    try {
+      const response = await fetch(`${API_URL}/users/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || 'Registration failed');
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      console.error('Registration error:', error);
+      return { success: false, error: error.message };
+    }
   };
 
   // Handle login
-  const login = (token, rememberMe = false) => {
-    if (rememberMe) {
-      localStorage.setItem('authtoken', token);
-    } else {
-      sessionStorage.setItem('authtoken', token);
+  const login = async (email, password, rememberMe = false) => {
+    try {
+      // Your backend uses /auth/login instead of /token
+      const response = await fetch(`${API_URL}/auth/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.detail || 'Authentication failed');
+      }
+  
+      // Assuming your backend returns the token directly as a string
+      const token = data.access_token;
+
+      
+      if (!token) {
+        throw new Error('Invalid token response');
+      }
+
+
+      // Store token based on remember me choice
+      if (rememberMe) {
+        localStorage.setItem('authtoken', token);
+        localStorage.setItem('userEmail', email);
+      } else {
+        sessionStorage.setItem('authtoken', token);
+        localStorage.setItem('userEmail', email);
+      }
+      
+      setIsAuthenticated(true);
+      setCurrentUser({ email: email });
+      
+      // Navigate home on successful login
+      navigate('/');
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Login error:', error);
+      return { success: false, error: error.message };
     }
-    setIsAuthenticated(true);
   };
 
   // Handle logout
   const logout = () => {
     localStorage.removeItem('authtoken');
     sessionStorage.removeItem('authtoken');
+    localStorage.removeItem('userId');
+    sessionStorage.removeItem('userId');
     setIsAuthenticated(false);
+    setCurrentUser(null);
     setCartItems({});
     navigate('/login');
   };
+
+
+  // Update user profile
+  const updateProfile = async (userData) => {
+    try {
+      const token = localStorage.getItem('authtoken') || sessionStorage.getItem('authtoken');
+      const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+      
+      if (!token || !userId) {
+        throw new Error('Not authenticated');
+      }
+      
+      const response = await fetch(`${API_URL}/users/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(userData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || 'Profile update failed');
+      }
+
+      // Update currentUser state with new data
+      setCurrentUser({...currentUser, ...data});
+      return { success: true, data };
+    } catch (error) {
+      console.error('Update profile error:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
 
   // Require authentication for protected routes
   const requireAuth = (callback) => {
@@ -172,8 +290,11 @@ const ShopContextProvider = (props) => {
     getCartAmount,
     navigate,
     isAuthenticated,
+    currentUser,
+    register,
     login,
     logout,
+    updateProfile,
     proceedToCheckout,
     requireAuth,
   };

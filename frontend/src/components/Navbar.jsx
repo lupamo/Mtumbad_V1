@@ -5,10 +5,17 @@ import { assets } from "../assets/assets";
 import { ShopContext } from "../context/ShopContext";
 
 const Navbar = () => {
-
 	// menu setup
 	const [visible, setVisible] = React.useState(false);
-	const { setShowSearch, getCartCount } = useContext(ShopContext);
+	const { 
+		setShowSearch, 
+		getCartCount, 
+		isAuthenticated, 
+		currentUser 
+	} = useContext(ShopContext);
+	
+	// Determine profile link destination based on authentication status
+	const profileLinkDestination = isAuthenticated ? '/profile' : '/login';
 	
 	return (
 		<div className="flex items-center justify-between py-5 font-medium">
@@ -37,16 +44,18 @@ const Navbar = () => {
 			<div className="flex items-center gap-6">
 				<img onClick={()=>setShowSearch(true)} src={assets.search_icon} className='w-5 cursor-pointer' alt="search" />
 				<div className="group relative">
-					<Link to={`/login`}>
-						<img src={assets.profile} className='w-5 cursor-pointer' alt="profile" />
+					<Link to={profileLinkDestination}>
+						<img 
+							src={assets.profile} 
+							className={`w-5 cursor-pointer ${isAuthenticated ? 'border border-black rounded-full p-0.5' : ''}`}
+							alt="profile" 
+						/>
 					</Link>
-					<div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4">
-						<div className="flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 rounded">
-							<p className="cursor-pointer hover:text-black">My Profile</p>
-							<p className="cursor-pointer hover:text-black">Orders</p>
-							<p className="cursor-pointer hover:text-black">Logout</p>
+					{isAuthenticated && (
+						<div className="absolute right-0 min-w-max bg-white shadow-lg rounded p-2 hidden group-hover:block z-10">
+							<p className="text-sm whitespace-nowrap">{currentUser?.name || currentUser?.email}</p>
 						</div>
-					</div>
+					)}
 				</div>
 				<Link to='/cart' className="relative">
 					<img src={assets.cart} className='w-5 min-w-5 cursor-pointer' alt="cart" />
@@ -55,7 +64,7 @@ const Navbar = () => {
 				<img onClick={()=>setVisible(true)} src={assets.menu} alt="Menu" className="w-5 cursor pointer sm:hidden" />
 			</div>
 			{/* side bar menu on small screen */}
-			<div className={`absolute top-0 right-0 bottom-0 overflow-hidden bg-white transition-all ${visible ? 'w-full':'w-0'}`}>
+			<div className={`absolute top-0 right-0 bottom-0 overflow-hidden bg-white transition-all z-20 ${visible ? 'w-full':'w-0'}`}>
 				<div className="flex flex-col text-gray-600">
 					<div onClick={() => setVisible(false)} className="flex items-center gap-4 p-3 cursor-pointer">
 						<img src={assets.drop} alt="back" className="h-5 rotate-90" />
@@ -72,6 +81,9 @@ const Navbar = () => {
 					</NavLink>
 					<NavLink onClick={() => setVisible(false)} to='/contact' className='py-2 pl-6 border'>
 						<p>CONTACT</p>
+					</NavLink>
+					<NavLink onClick={() => setVisible(false)} to={profileLinkDestination} className='py-2 pl-6 border'>
+						<p>{isAuthenticated ? 'PROFILE' : 'LOGIN'}</p>
 					</NavLink>
 				</div>
 			</div>

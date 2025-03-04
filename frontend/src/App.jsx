@@ -16,6 +16,7 @@ import Searchbar from './components/Searchbar';
 import AdminLogin from './pages/AdminLogin';
 import Admin from './pages/Admin';
 import { ToastContainer, toast } from 'react-toastify';
+import Profile from './pages/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
         <Route path='/admin-login' element={<AdminLogin />} />
         <Route path='/place-order' element={<ProtectedRoute><PlaceOrder /></ProtectedRoute>} />
         <Route path="/admin/" element={<Admin />} />
+        <Route path='/profile' element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       </Routes>
       <Footer />
     </div>
