@@ -45,7 +45,7 @@ async def get_user(user_id: str, session: Session = Depends(get_session)):
 
 
 @users_router.put("/{user_id}", response_model=schemas.UserResponse)
-async def update_user(user_id: str, user: schemas.UserCreate, session: Session = Depends(get_session)):
+async def update_user(user_id: str, user: schemas.UserUpdate, session: Session = Depends(get_session)):
     updated_user = session.query(User).filter(User.id == user_id).first()
     if not updated_user:
         raise HTTPError.not_found("User not found")

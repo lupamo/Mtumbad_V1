@@ -17,6 +17,6 @@ class UserResponse(BaseModel):
 
 class UserUpdate(BaseModel):
     name: Optional[str]
-    email: Optional[str]
     address: Optional[str]
     contact: Optional[str]
+    is_admin: Optional[bool]
