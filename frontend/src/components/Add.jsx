@@ -1,15 +1,17 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { assets } from "../assets/assets";
 import { ShopContext } from "../context/ShopContext";
 import { toast } from 'react-toastify';
 
 const Add = () => {
-	const { API_URL } = useContext(ShopContext);
+	// const { API_URL } = useContext(ShopContext);
 	const [images, setImages] = useState([null, null, null, null]);
 	const [productName, setProductName] = useState('');
 	const [productDescription, setProductDescription] = useState('');
-	const [productCategory, setProductCategory] = useState('Men');
-	const [productSubCategory, setProductSubCategory] = useState('topWear');
+	const [categories, setCategories] = useState([]);
+    const [subcategories, setSubcategories] = useState([]);
+	const [productCategory, setProductCategory] = useState('');
+    const [productSubCategory, setProductSubCategory] = useState('');
 	const [productPrice, setProductPrice] = useState('');
 	const [productSizes, setProductSizes] = useState([
 		{ size: '', stock: '' },
@@ -19,6 +21,28 @@ const Add = () => {
 		{ size: '', stock: '' }
 	]);
 	const [bestSelling, setBestSelling] = useState(false);
+
+	//fetch catefories on component mount
+	useEffect(() => {
+		const fetchCategories = async () => {
+			try {
+				const response = await fetch('http://localhost:8001/categories/');
+				const data = await response.json();
+				setCategories(data);
+
+				// Fetch subcategories for the first category
+				if (data.length > 0) {
+					const subResponse = await fetch(`http://localhost:8001/categories/${data[0].id}/subcategories`);
+					const subData = await subResponse.json();
+					setSubcategories(subData);
+				}
+			} catch (error) {
+				console.error('Error fetching categories:', error);
+				toast.error('Failed to load categories');
+			}
+		};
+		fetchCategories();
+	}, []);
 
 	// Handle image selection
 	const handleImageChange = (index, file) => {
@@ -53,6 +77,15 @@ const Add = () => {
 			toast.error('Please fill in all required fields');
 			return;
 		}
+
+		if (!productCategory) {
+			toast.error('Please select a category');
+			return;
+		}
+		if (!productSubCategory) {
+            toast.error('Please select a subcategory');
+            return;
+        }
 	
 		// Prepare filtered sizes with proper type conversion
 		const filteredSizes = productSizes
@@ -68,27 +101,23 @@ const Add = () => {
 			return;
 		}
 	
-		// Prepare product data payload
-		const productData = {
-			name: productName,
-			description: productDescription,
-			price: parseFloat(productPrice),
-			category_id: productCategory,
-			subcategory_id: productSubCategory,
-			sizes: filteredSizes,
-			best_selling: bestSelling,
-			image_urls: [] // Add this if your backend expects image URLs
-		};
-	
 		// Retrieve the authentication token
 		const token = localStorage.getItem('authtoken') || sessionStorage.getItem('authtoken');
 	
 		try {
-			// Log the payload for debugging
-			console.log('Product Payload:', JSON.stringify(productData, null, 2));
-	
+			// Prepare product data payload (without image_urls initially)
+			const productData = {
+				name: productName,
+				description: productDescription,
+				price: parseFloat(productPrice),
+				category_id: productCategory,
+				subcategory_id: productSubCategory,
+				sizes: filteredSizes,
+				best_selling: bestSelling,
+				image_urls: []
+			};
 			// First, create the product
-			const productResponse = await fetch(`${API_URL}/products/`, {
+			const productResponse = await fetch('http://localhost:8001/products/', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -109,14 +138,14 @@ const Add = () => {
 
 			// Prepare image upload
 			const imageFiles = images.filter(img => img !== null);
-			const imageFormData = new FormData();
-			imageFiles.forEach((file) => {
-				imageFormData.append('files', file);
-			});
-	
-			// If images exist, upload them
 			if (imageFiles.length > 0) {
-				const imageUploadResponse = await fetch(`${API_URL}/products/${productId}/images`, {
+				const imageFormData = new FormData();
+				imageFiles.forEach((file) => {
+					imageFormData.append('files', file);
+				});
+
+				// Upload images
+				const imageUploadResponse = await fetch(`http://localhost:8001/products/${productId}/images`, {
 					method: 'POST',
 					headers: {
 						'Authorization': `Bearer ${token}`
@@ -125,8 +154,8 @@ const Add = () => {
 				});
 	
 				if (!imageUploadResponse.ok) {
-					const errorData = await imageUploadResponse.json();
-					throw new Error(errorData.detail || 'Failed to upload images');
+					const errorData = await imageUploadResponse.text();
+					throw new Error(errorData || 'Failed to upload images');
 				}
 			}
 	
@@ -211,23 +240,41 @@ const Add = () => {
 					<p className='mb-2'>Product Category</p>
 					<select 
 						value={productCategory} 
-						onChange={(e)=>setProductCategory(e.target.value)} 
+						onChange={(e) => {
+							setProductCategory(e.target.value);
+							// Fetch subcategories for the selected category
+							const selectedCategory = categories.find(cat => cat.id === e.target.value);
+							if (selectedCategory) {
+								fetch(`http://localhost:8001/categories/${selectedCategory.id}/subcategories`)
+									.then(res => res.json())
+									.then(setSubcategories)
+									.catch(console.error);
+							}
+						}}
 						className="w-full px-3 py-2 border rounded-sm border-gray-300 max-w-[100px]"
 					>
-						<option value="Men">Men</option>
-						<option value="Women">Women</option>
-						<option value="Kids">Kids</option>
+						<option value="">Select Category</option>
+                    	{categories.map(category => (
+							<option key={category.id} value={category.id}>
+								{category.name}
+							</option>
+                    	))}
 					</select>
 				</div>
 				<div>
 					<p className='mb-2'>Product SubCategory</p>
 					<select 
 						value={productSubCategory} 
-						onChange={(e)=>setProductSubCategory(e.target.value)} 
+						onChange={(e)=>setProductSubCategory(e.target.value)}
+						disabled={!productCategory}
 						className="w-full px-3 py-2 border rounded-sm border-gray-300 max-w-[120px]"
 					>
-						<option value="topWear">TopWear</option>
-						<option value="bottomWear">BottomWear</option>
+						<option value="">Select Subcategory</option>
+						{subcategories.map(subcategory => (
+							<option key={subcategory.id} value={subcategory.id}>
+								{subcategory.name}
+							</option>
+						))}
 					</select>
 				</div>
 				<div>
