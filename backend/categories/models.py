@@ -16,7 +16,7 @@ class Category(BaseModel):
 class Subcategory(BaseModel):
     __tablename__ = "subcategories"
 
-    name = Column(String(100), unique=True, nullable=False)
+    name = Column(String(100), nullable=False)
 
     # Foreign key linking to Category
     category_id = Column(String, ForeignKey("categories.id"), nullable=False)
