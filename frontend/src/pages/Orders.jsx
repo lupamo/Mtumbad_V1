@@ -6,108 +6,117 @@ import { toast } from 'react-toastify';
 const API_URL = 'https://localhost/8000';
 
 const Orders = () => {
-	const { currency, requireAuth } = useContext(ShopContext);
-	const [orders, setOrders] = useState([]);
-	const [loading, setLoading] = useState(true);
-	const [expandedOrderId, setExpandedOrderId] = useState(null);
+    const { currency, requireAuth } = useContext(ShopContext);
+    const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [expandedOrderId, setExpandedOrderId] = useState(null);
   
-	useEffect(() => {
-	  // Check if user is authenticated before fetching orders
-	  requireAuth(() => {
-		fetchOrders();
-	  });
-	}, []);
+    useEffect(() => {
+        // Check if user is authenticated before fetching orders
+        requireAuth(() => {
+            fetchOrders();
+        });
+    }, []);
   
-	const fetchOrders = async () => {
-	  try {
-		setLoading(true);
-		const token = localStorage.getItem('authtoken') || sessionStorage.getItem('authtoken');
-		
-		if (!token) {
-		  console.error('No authentication token found');
-		  setLoading(false);
-		  return;
-		}
-		
-		const response = await fetch(`${API_URL}/orders/user`, {
-		  headers: {
-			'Authorization': `Bearer ${token}`
-		  }
-		});
-		
-		if (!response.ok) {
-		  throw new Error('Failed to fetch orders');
-		}
-		
-		const data = await response.json();
-		setOrders(data);
-	  } catch (error) {
-		console.error('Error fetching orders:', error);
-		toast.error('Failed to load orders');
-	  } finally {
-		setLoading(false);
-	  }
-	};
+    const fetchOrders = async () => {
+        try {
+            setLoading(true);
+            const token = localStorage.getItem('authtoken') || sessionStorage.getItem('authtoken');
+            
+            if (!token) {
+                console.error('No authentication token found');
+                setLoading(false);
+                return;
+            }
+
+            // Get current user email to fetch their orders
+            const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail');
+            
+            if (!userEmail) {
+                toast.error("User information not found");
+                setLoading(false);
+                return;
+            }
+            
+            const response = await fetch(`${API_URL}/orders/user/${userEmail}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch orders');
+            }
+            
+            const data = await response.json();
+            setOrders(data);
+        } catch (error) {
+            console.error('Error fetching orders:', error);
+            toast.error('Failed to load orders');
+        } finally {
+            setLoading(false);
+        }
+    };
   
-	const fetchOrderItems = async (orderId) => {
-	  try {
-		const token = localStorage.getItem('authtoken') || sessionStorage.getItem('authtoken');
-		
-		const response = await fetch(`${API_URL}/orders/${orderId}/items`, {
-		  headers: {
-			'Authorization': `Bearer ${token}`
-		  }
-		});
-		
-		if (!response.ok) {
-		  throw new Error('Failed to fetch order items');
-		}
-		
-		const items = await response.json();
-		
-		setOrders(prevOrders => 
-		  prevOrders.map(order => 
-			order.id === orderId ? { ...order, order_items: items } : order
-		  )
-		);
-	  } catch (error) {
-		console.error('Error fetching order items:', error);
-	  }
-	};
+    const fetchOrderItems = async (orderId) => {
+        try {
+            const token = localStorage.getItem('authtoken') || sessionStorage.getItem('authtoken');
+            
+            const response = await fetch(`${API_URL}/orders/${orderId}/items`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch order items');
+            }
+            
+            const items = await response.json();
+            
+            setOrders(prevOrders => 
+                prevOrders.map(order => 
+                    order.id === orderId ? { ...order, order_items: items } : order
+                )
+            );
+        } catch (error) {
+            console.error('Error fetching order items:', error);
+        }
+    };
   
-	const toggleOrderDetails = (orderId) => {
-	  if (expandedOrderId === orderId) {
-		setExpandedOrderId(null);
-	  } else {
-		setExpandedOrderId(orderId);
-		fetchOrderItems(orderId);
-	  }
-	};
-	
-	const formatDate = (dateString) => {
-	  const date = new Date(dateString);
-	  const options = { year: 'numeric', month: 'long', day: 'numeric' };
-	  return date.toLocaleDateString('en-US', options);
-	};
+    const toggleOrderDetails = (orderId) => {
+        if (expandedOrderId === orderId) {
+            setExpandedOrderId(null);
+        } else {
+            setExpandedOrderId(orderId);
+            fetchOrderItems(orderId);
+        }
+    };
+    
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return date.toLocaleDateString('en-US', options);
+    };
   
-	if (loading) {
-	  return (
-		<div className="flex justify-center items-center h-64">
-		  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
-		</div>
-	  );
-	}
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+            </div>
+        );
+    }
   
-	if (orders.length === 0) {
-	  return (
-		<div className="border-t pt-16">
-		  <div className="text-center">
-			<Title text1={'MY'} text2={'ORDERS'} />
-			<div className="mt-10 text-gray-500">You haven't placed any orders yet.</div>
-		  </div>
-		</div>
-	  );
-	}
+    if (orders.length === 0) {
+        return (
+            <div className="border-t pt-16">
+                <div className="text-center">
+                    <Title text1={'MY'} text2={'ORDERS'} />
+                    <div className="mt-10 text-gray-500">You haven't placed any orders yet.</div>
+                </div>
+            </div>
+        );
+    }
   
 	return (
 	  <div className="border-t pt-16">
