@@ -3,7 +3,7 @@ import { ShopContext } from "../context/ShopContext";
 import Title from "../components/Title";
 import { toast } from 'react-toastify';
 
-const API_URL = 'https://localhost/8000';
+const API_URL = 'http://localhost/8000';
 
 const Orders = () => {
     const { currency, requireAuth } = useContext(ShopContext);
