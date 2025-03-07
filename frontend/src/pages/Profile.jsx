@@ -23,7 +23,7 @@ const Profile = () => {
 			// Get the authentication token
 			const token = localStorage.getItem('authtoken') || sessionStorage.getItem('authtoken');
 			
-			const response = await fetch(`http://localhost:8001/orders/user/${currentUser.id}`, {
+			const response = await fetch(`http://localhost:8000/orders/user/${currentUser.id}`, {
 				headers: {
 					'Authorization': `Bearer ${token}`
 				}

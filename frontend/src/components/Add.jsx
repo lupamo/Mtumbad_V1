@@ -26,13 +26,13 @@ const Add = () => {
 	useEffect(() => {
 		const fetchCategories = async () => {
 			try {
-				const response = await fetch('http://localhost:8001/categories/');
+				const response = await fetch('http://localhost:8000/categories/');
 				const data = await response.json();
 				setCategories(data);
 
 				// Fetch subcategories for the first category
 				if (data.length > 0) {
-					const subResponse = await fetch(`http://localhost:8001/categories/${data[0].id}/subcategories`);
+					const subResponse = await fetch(`http://localhost:8000/categories/${data[0].id}/subcategories`);
 					const subData = await subResponse.json();
 					setSubcategories(subData);
 				}
@@ -114,10 +114,9 @@ const Add = () => {
 				subcategory_id: productSubCategory,
 				sizes: filteredSizes,
 				best_selling: bestSelling,
-				image_urls: []
 			};
 			// First, create the product
-			const productResponse = await fetch('http://localhost:8001/products/', {
+			const productResponse = await fetch('http://localhost:8000/products/', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -145,7 +144,7 @@ const Add = () => {
 				});
 
 				// Upload images
-				const imageUploadResponse = await fetch(`http://localhost:8001/products/${productId}/images`, {
+				const imageUploadResponse = await fetch(`http://localhost:8000/products/${productId}/images`, {
 					method: 'POST',
 					headers: {
 						'Authorization': `Bearer ${token}`
@@ -245,7 +244,7 @@ const Add = () => {
 							// Fetch subcategories for the selected category
 							const selectedCategory = categories.find(cat => cat.id === e.target.value);
 							if (selectedCategory) {
-								fetch(`http://localhost:8001/categories/${selectedCategory.id}/subcategories`)
+								fetch(`http://localhost:8000/categories/${selectedCategory.id}/subcategories`)
 									.then(res => res.json())
 									.then(setSubcategories)
 									.catch(console.error);

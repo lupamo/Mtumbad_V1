@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { useContext } from "react";
 import { assets } from "../assets/assets";
 import { ShopContext } from "../context/ShopContext";
 
@@ -11,11 +10,38 @@ const Navbar = () => {
 		setShowSearch, 
 		getCartCount, 
 		isAuthenticated, 
-		currentUser 
+		currentUser,
+		isAdmin
 	} = useContext(ShopContext);
 	
 	// Determine profile link destination based on authentication status
 	const profileLinkDestination = isAuthenticated ? '/profile' : '/login';
+
+	if (isAdmin) {
+		return (
+		  <div className="flex items-center justify-between py-5 font-medium">
+			<Link to='/admin'>
+			  <img src={assets.logo} alt="logo" className="w-36" />
+			</Link>
+			
+			<div className="flex items-center gap-6">
+			  <div className="group relative">
+				<Link to='/profile'>
+				  <img 
+					src={assets.profile} 
+					className="w-5 cursor-pointer border border-black rounded-full p-0.5"
+					alt="profile" 
+				  />
+				</Link>
+				<div className="absolute right-0 min-w-max bg-white shadow-lg rounded p-2 hidden group-hover:block z-10">
+				  <p className="text-sm whitespace-nowrap">{currentUser?.name || currentUser?.email}</p>
+				</div>
+			  </div>
+			</div>
+		  </div>
+		);
+	}
+	  
 	
 	return (
 		<div className="flex items-center justify-between py-5 font-medium">
