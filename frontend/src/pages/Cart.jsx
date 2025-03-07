@@ -1,30 +1,41 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
 import Title from "../components/Title";
 import { assets } from "../assets/assets";
 import CartTotal from "../components/CartTotal";
 
-
 const Cart = () => {
 	const { products, currency, cartItems, updateQuantity, navigate} = useContext(ShopContext);
-	const [cartData, setCartData] = React.useState([]);
+	const [cartData, setCartData] = useState([]);
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		const tempData = [];
-		for(const items in cartItems) {
-			for (const item in cartItems[items]){
-				if (cartItems[items][item] > 0) {
-					tempData.push({
-						id: items,
-						size: item,
-						quantity: cartItems[items][item]
-					})
+		// Only process cart items if products are loaded
+		if (products && products.length > 0) {
+			const tempData = [];
+			for(const items in cartItems) {
+				for (const item in cartItems[items]){
+					if (cartItems[items][item] > 0) {
+						tempData.push({
+							id: items,
+							size: item,
+							quantity: cartItems[items][item]
+						});
+					}
 				}
 			}
+			setCartData(tempData);
+			setLoading(false);
 		}
-		setCartData(tempData);
-	}, [cartItems]);
+	}, [cartItems, products]);
 
+	if (loading && (!products || products.length === 0)) {
+		return (
+			<div className="border-t pt-14 flex justify-center">
+				<div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+			</div>
+		);
+	}
 
 	return (
 		<div className="border-t pt-14">
@@ -32,33 +43,63 @@ const Cart = () => {
 				<Title text1={'YOUR'} text2={'CART'} />
 			</div>
 			<div>
-				{
+				{cartData.length === 0 ? (
+					<div className="text-center py-10">
+						<p>Your cart is empty</p>
+					</div>
+				) : (
 					cartData.map((item, index) => {
 						const productData = products.find(product => product.id === item.id);
+						
+						// Skip rendering if product not found
+						if (!productData) return null;
+						
+						// Ensure image exists
+						const imageUrl = productData.image && productData.image.length > 0 
+							? productData.image[0] 
+							: '/placeholder-image.jpg'; // Provide a placeholder
+						
 						return (
-							<div key={index} className=" flex py-4 justify-between border-b border-t text-gray-700 grid-cols-[4fr_0.5fr_0.5fr] items-center gap-4">
+							<div key={index} className="flex py-4 justify-between border-b border-t text-gray-700 grid-cols-[4fr_0.5fr_0.5fr] items-center gap-4">
 								<div className="flex items-start gap-6">
-									<img className="w-16 sm:w-20" src={productData.image[0]} alt="product" />
+									<img className="w-16 sm:w-20" src={imageUrl} alt="product" />
 									<div>
 										<p className="text-xs sm:text-lg font-medium">{productData.name}</p>
 										<div className="flex-col items-center gap-3 mt-2">
 											<p>{currency}{productData.price}</p>
-											<p className="center px-2 w-8 mt-2  sm:py-1 border bg-slate-50">{item.size}</p>
+											<p className="center px-2 w-8 mt-2 sm:py-1 border bg-slate-50">{item.size}</p>
 										</div>
 									</div>
 								</div>
-								<input onChange={(e) => e.target.value === '' || e.target .value === '0' ? null : updateQuantity(item.id, item.size, Number(e.target.value)) } className="border max-w-10 sm:max-w-20 px-1 sm:px-2 py-1" type="number" min={1} defaultValue={item.quantity} />
-								<img onClick={()=>updateQuantity(item.id, item.size, 0)} className="w-4 sm:w-5 cursor-pointer" src={assets.bin} alt="bin" />
+								<input 
+									onChange={(e) => e.target.value === '' || e.target.value === '0' 
+										? null 
+										: updateQuantity(item.id, item.size, Number(e.target.value))} 
+									className="border max-w-10 sm:max-w-20 px-1 sm:px-2 py-1" 
+									type="number" 
+									min={1} 
+									defaultValue={item.quantity} 
+								/>
+								<img 
+									onClick={() => updateQuantity(item.id, item.size, 0)} 
+									className="w-4 sm:w-5 cursor-pointer" 
+									src={assets.bin} 
+									alt="bin" 
+								/>
 							</div>
 						)
 					})
-				}
+				)}
 			</div>
 			<div className="flex justify-end my-20">
 				<div className="w-full sm:w-[450px]">
 					<CartTotal />
 					<div className="w-full text-end">
-						<button onClick={() => navigate('/place-order')} className="bg-black text-white text-sm my-8 px-8 py-3" >
+						<button 
+							onClick={() => navigate('/place-order')} 
+							className={`bg-black text-white text-sm my-8 px-8 py-3 ${cartData.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+							disabled={cartData.length === 0}
+						>
 							CHECKOUT
 						</button>
 					</div>
