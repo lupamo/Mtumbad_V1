@@ -144,3 +144,27 @@ async def update_product(product_id: str, product: ProductCreate, session: Sessi
     session.commit()
     session.refresh(product)
     return product
+
+
+@product_router.delete('/{product_id}')
+async def delete_product(product_id: str, session: Session = Depends(get_session)):
+    product = session.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPError.not_found("Product not found")
+    
+    file_paths = [image.image_url.split("/")[-1] for image in session.query(ProductImage).
+                  filter(ProductImage.product_id == product_id).all()]
+    try:
+        for file_path in file_paths:
+            supabase.storage.from_("product_images").remove(file_path)
+    except Exception as e:
+        print("Error deleting images from supabase")
+    
+    product_images = session.query(ProductImage).filter(ProductImage.product_id == product_id).all()
+    for image in product_images:
+        session.delete(image)
+    
+    
+    session.delete(product)
+    session.commit()
+    return {"message": "Product successfully removed"}

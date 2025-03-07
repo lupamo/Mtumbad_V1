@@ -21,7 +21,7 @@ class Product(BaseModel):
     products_images = relationship("ProductImage", back_populates="product", cascade="all, delete-orphan")
     subcategory = relationship("Subcategory", back_populates="products")
     carts = relationship("Cart", back_populates="product")
-    order_items = relationship("OrderItem", back_populates="product")
+    order_items = relationship("OrderItem", back_populates="product", cascade="all, delete-orphan")
     sizes = relationship("ProductSize", back_populates="product", cascade="all, delete-orphan")
 
 
