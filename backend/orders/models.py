@@ -9,6 +9,9 @@ class Order(BaseModel):
     user_id = Column(String(256), ForeignKey("users.id"), nullable=False)
     total = Column(Float, nullable=False)  # Total price of the entire order
     status = Column(String(256), default="pending")  # Status: pending, completed, canceled
+    location = Column(String(256))
+    phone_number = Column(String(256))
+    street = Column(String(256))
 
     # Relationships
     user = relationship("User", back_populates="orders")

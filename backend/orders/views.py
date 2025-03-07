@@ -6,6 +6,9 @@ from database.connection import get_session
 from cart.models import Cart
 from fastapi.security import HTTPBasicCredentials
 from auth.auth import security, AuthHandler
+from .schemas import CheckoutProduct
+from users.models import User
+from products.models import Product, ProductImage
 
 
 order_router = APIRouter(prefix="/orders", tags=["Orders"])
@@ -13,7 +16,20 @@ order_router = APIRouter(prefix="/orders", tags=["Orders"])
 @order_router.get("/")
 async def get_orders(session: Session = Depends(get_session)):
     orders = session.query(Order).all()
+    for order in orders:
+        order.username = session.query(User).filter(User.id == order.user_id).first().name
     return orders
+
+
+@order_router.get('/me')
+async def get_my_orders(
+    credentials: HTTPBasicCredentials = Depends(security),
+    session: Session = Depends(get_session)
+    ):
+    user = AuthHandler().get_current_user(session, credentials.credentials)
+    orders = session.query(Order).filter(Order.user_id == user.id).all()
+    return orders
+
 
 @order_router.get("/{order_id}")
 async def get_order(order_id: str, session: Session = Depends(get_session)):
@@ -24,6 +40,7 @@ async def get_order(order_id: str, session: Session = Depends(get_session)):
 
 @order_router.post("/checkout")
 async def checkout(
+    product: CheckoutProduct,
     credentials: HTTPBasicCredentials = Depends(security),
     session: Session = Depends(get_session)
     ):
@@ -37,7 +54,13 @@ async def checkout(
     total_price = sum(item.product.price * item.quantity for item in cart_items)
 
     # Create an order
-    new_order = Order(user_id=user.id, total=total_price)
+    new_order = Order(
+        user_id=user.id,
+        total=total_price,
+        location=product.location,
+        phone_number=product.phone_number,
+        street=product.street
+        )
     session.add(new_order)
     session.commit()  # Save order first to generate order_id
 
@@ -61,6 +84,10 @@ async def checkout(
 @order_router.get("/{order_id}/items")
 async def get_order_items(order_id: str, session: Session = Depends(get_session)):
     order_items = session.query(OrderItem).filter(OrderItem.order_id == order_id).all()
+    for order_item in order_items:
+        product_id = session.query(Product).filter(Product.id == order_item.product_id).first().id
+        order_item.image_urls = [image.image_url for image in session.query(ProductImage)
+                                     .filter(ProductImage.product_id == product_id).all()]
     return order_items
 
 
