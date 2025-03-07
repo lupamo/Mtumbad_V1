@@ -17,6 +17,8 @@ const ShopContextProvider = (props) => {
   const [cartItems, setCartItems] = useState({});
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [products, setProducts ] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
 
@@ -32,7 +34,43 @@ const ShopContextProvider = (props) => {
       }
     }
     checkAuthStatus();
+    fetchProducts();
   }, []);
+
+  // Fetch products from API
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_URL}/products/`);
+
+      if(!response.ok) {
+        throw new Error('Server error');
+      }
+      const data = await response.json();
+
+       // Transform backend data to match your frontend structure
+       const transformedProducts = data.map(item => ({
+        id: item.id,
+        name: item.name,
+        description: item.description,
+        price: item.price,
+        category: item.category_id,
+        subCategory: item.subcategory_id,
+        image: item.image_urls || [],
+        sizes: item.sizes.map(size => ({
+          size: size.size,
+          quantity: size.stock
+        })),
+        bestselling: item.bestselling || false
+      }));
+      setProducts(transformedProducts);
+    } catch (error) {
+      console.error('Fetch products error:', error);
+      toast.error('Failed to fetch products');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Check if user is authenticated
   const checkAuthStatus = async () => {
@@ -156,7 +194,7 @@ const ShopContextProvider = (props) => {
         throw new Error('Invalid token response');
       }
   
-      // Step 2: Get user information to verify admin status
+      // Get user information to verify admin status
       const userInfoResponse = await fetch(`${API_URL}/users/`, {
         method: 'GET',
         headers: {

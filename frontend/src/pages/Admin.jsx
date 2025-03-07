@@ -24,7 +24,7 @@ const Admin = () => {
 	return(
 		<div className="bg-gray-50 min-h-screen">
 			<>
-			<AdminNav />
+			<AdminNav />  
 			<hr />
 			<div className="flex w-full">
 				<AdminSidebar setActiveComponent={setActiveComponent} activeComponent={activeComponent} />
