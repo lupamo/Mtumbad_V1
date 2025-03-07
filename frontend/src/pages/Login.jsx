@@ -25,7 +25,7 @@ const Login = () => {
 	const onSubmitHandler = async(e) => {
 		e.preventDefault();
 		setIsLoading(true);
-
+		
 		try {
 			if (currentState.toLowerCase() === 'sign up') {
 				// Handle signup

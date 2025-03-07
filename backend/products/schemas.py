@@ -12,3 +12,4 @@ class ProductCreate(BaseModel):
     category_id: str
     subcategory_id: str
     sizes: List[ProductSizeCreate]
+ 
