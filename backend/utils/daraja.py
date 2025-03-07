@@ -103,4 +103,4 @@ class Daraja:
         return response
     
 # daraja = Daraja()
-# daraja.lipa_na_mpesa_online("174379", "1", "254707377461", "https://mydomain.com/path", "IandiStores", "test")
+# daraja.lipa_na_mpesa_online("174379", "1", "254768325056", "https://mydomain.com/path", "PascalShop", "test")

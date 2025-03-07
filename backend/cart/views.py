@@ -67,7 +67,7 @@ async def add_to_cart(
     session.refresh(new_cart)
     return new_cart or existing_cart
 
-@cart_router.get("user/{cart_id}")
+@cart_router.get("/user/{cart_id}")
 async def get_cart_item(cart_id: str, session: Session = Depends(get_session)):
     cart_item = session.query(Cart).filter(Cart.id == cart_id).first()
     if not cart_item:

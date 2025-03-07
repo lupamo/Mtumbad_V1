@@ -56,7 +56,6 @@ async def create_product(product: ProductCreate, session: Session = Depends(get_
         name=product.name,
         description=product.description,
         price=product.price,
-        image_urls=product.image_urls,
         category_id=product.category_id,
         subcategory_id=product.subcategory_id
     )

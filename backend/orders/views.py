@@ -15,6 +15,17 @@ async def get_orders(session: Session = Depends(get_session)):
     orders = session.query(Order).all()
     return orders
 
+
+@order_router.get('/me')
+async def get_my_orders(
+    credentials: HTTPBasicCredentials = Depends(security),
+    session: Session = Depends(get_session)
+    ):
+    user = AuthHandler().get_current_user(session, credentials.credentials)
+    orders = session.query(Order).filter(Order.user_id == user.id).all()
+    return orders
+
+
 @order_router.get("/{order_id}")
 async def get_order(order_id: str, session: Session = Depends(get_session)):
     order = session.query(Order).filter(Order.id == order_id).first()
