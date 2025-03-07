@@ -9,7 +9,7 @@ const API_URL = 'http://localhost:8000';
 
 const PlaceOrder = () => {
     const [method, setMethod] = useState('cod');
-    const { navigate, cartItems, getCartAmount, getCartCount, requireAuth } = useContext(ShopContext);
+    const { navigate, cartItems, getCartAmount, getCartCount, requireAuth, delivery_fee } = useContext(ShopContext);
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         firstName: '',
@@ -40,6 +40,8 @@ const PlaceOrder = () => {
         }
 
         // Check if cart is empty
+        const cartCount = getCartCount();
+        console.log('Cart Count:', cartCount);
         if (getCartCount() === 0) {
             toast.error("Your cart is empty");
             return;
@@ -62,7 +64,13 @@ const PlaceOrder = () => {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
-                }
+                },
+                body: JSON.stringify({
+                    cartItems: cartItems,
+                    shippingDetails: formData,
+                    paymentMethod: method,
+                    total: getCartAmount() + delivery_fee
+                })
             });
 
             if (!response.ok) {
@@ -83,7 +91,7 @@ const PlaceOrder = () => {
             
         } catch (error) {
             console.error("Checkout error:", error);
-            toast.error(error.message || "Failed to place order");
+            toast.error("Failed to place order");
         } finally {
             setLoading(false);
         }
