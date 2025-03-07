@@ -18,11 +18,11 @@ const PlaceOrder = () => {
 					<Title text1={'DELIVERY'} text2={'INFORMATION'} />
 				</div>
 				<div className="flex gap-3">
-					<input className="border border-gray-300 rounded py-1.5 w-full px-3.5" type="text" placeholder="First Name" />
-					<input className="border border-gray-300 rounded py-1.5 w-full px-3.5" type="text" placeholder="Last Name" />
+					<input className="border border-gray-300 rounded py-1.5 w-full px-3.5" type="text" placeholder="First Name" required />
+					<input className="border border-gray-300 rounded py-1.5 w-full px-3.5" type="text" placeholder="Last Name" required />
 				</div>
-				<input className="border border-gray-300 rounded py-1.5 w-full px-3.5" type="email" placeholder="Email adreess" />
-				<input className="border border-gray-300 rounded py-1.5 w-full px-3.5" type="text" placeholder="Street" />
+				<input className="border border-gray-300 rounded py-1.5 w-full px-3.5" type="email" placeholder="Email adreess" required />
+				<input className="border border-gray-300 rounded py-1.5 w-full px-3.5" type="text" placeholder="Street" required />
 				<div className="flex gap-3">
 					<input className="border border-gray-300 rounded py-1.5 w-full px-3.5" type="text" placeholder="Location" />
 					<input className="border border-gray-300 rounded py-1.5 w-full px-3.5" type="text" placeholder="County" />
@@ -31,7 +31,7 @@ const PlaceOrder = () => {
 					<input className="border border-gray-300 rounded py-1.5 w-full px-3.5" type="number" placeholder="Zip code" />
 					<input className="border border-gray-300 rounded py-1.5 w-full px-3.5" type="text" placeholder="Counrty" />
 				</div>
-				<input className="border border-gray-300 rounded py-1.5 w-full px-3.5" type="number" placeholder="Phone" />
+				<input className="border border-gray-300 rounded py-1.5 w-full px-3.5" type="number" placeholder="Phone" required />
 
 			</div>
 

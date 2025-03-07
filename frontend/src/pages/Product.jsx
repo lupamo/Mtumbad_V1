@@ -30,7 +30,9 @@ const Product = () => {
 			const existingProduct = products.find((item) => item.id === productId);
 			if (existingProduct) {
 				setProductData(existingProduct);
-				setImage(existingProduct.image[0] || '');
+				if (existingProduct.image && existingProduct.image.length > 0) {
+				  setImage(existingProduct.image[0]);
+				}
 				setIsLoading(false);
 				return;
 			}
@@ -66,7 +68,8 @@ const Product = () => {
 			}finally {
 				setIsLoading(false);
 			}
-		}
+		};
+		fetchProductData();
 	}, [productId, products]);
 
 	if (isLoading || !productData) {
