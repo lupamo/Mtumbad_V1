@@ -9,18 +9,13 @@ const API_URL = 'http://localhost:8000';
 
 const PlaceOrder = () => {
     const [method, setMethod] = useState('cod');
-    const { navigate, cartItems, getCartAmount, getCartCount, requireAuth, delivery_fee } = useContext(ShopContext);
+    const { navigate, cartItems, getCartAmount, getCartCount, delivery_fee } = useContext(ShopContext);
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        email: '',
+        
         street: '',
         location: '',
-        county: '',
-        zipCode: '',
-        country: '',
-        phone: ''
+        phone_number: ''
     });
 
     const handleChange = (e) => {
@@ -33,22 +28,19 @@ const PlaceOrder = () => {
 
     const handleCheckout = async () => {
         // Basic validation
-        if (!formData.firstName || !formData.lastName || !formData.email || 
-            !formData.street || !formData.phone) {
+        if (!formData.street || !formData.location || !formData.phone_number) {
             toast.error("Please fill in all required fields");
             return;
         }
-
-        // Check if cart is empty
-        const cartCount = getCartCount();
-        console.log('Cart Count:', cartCount);
+    
+        // Check if cart is empty locally
         if (getCartCount() === 0) {
             toast.error("Your cart is empty");
             return;
         }
-
+    
         setLoading(true);
-
+    
         try {
             const token = localStorage.getItem('authtoken') || sessionStorage.getItem('authtoken');
             
@@ -57,8 +49,32 @@ const PlaceOrder = () => {
                 navigate('/login');
                 return;
             }
-
-            // Call the checkout endpoint
+    
+            // Make sure all cart items are synced with the server
+            // This is likely missing in your current implementation
+            for (const item of Object.values(cartItems)) {
+                if (item.quantity > 0) {
+                    // Add item to server-side cart
+                    const addToCartResponse = await fetch(`${API_URL}/cart/`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            product_id: item.id,
+                            quantity: item.quantity,
+                            size: item.size || "default"
+                        })
+                    });
+                    
+                    if (!addToCartResponse.ok) {
+                        throw new Error("Failed to sync cart with server");
+                    }
+                }
+            }
+    
+            // Now proceed with checkout
             const response = await fetch(`${API_URL}/orders/checkout`, {
                 method: 'POST',
                 headers: {
@@ -66,18 +82,17 @@ const PlaceOrder = () => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    cartItems: cartItems,
-                    shippingDetails: formData,
-                    paymentMethod: method,
-                    total: getCartAmount() + delivery_fee
+                    phone_number: formData.phone_number,
+                    location: formData.location,
+                    street: formData.street
                 })
             });
-
+    
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.detail || 'Checkout failed');
             }
-
+    
             const data = await response.json();
             
             // Clear the cart from localStorage
@@ -91,7 +106,7 @@ const PlaceOrder = () => {
             
         } catch (error) {
             console.error("Checkout error:", error);
-            toast.error("Failed to place order");
+            toast.error("Failed to place order: " + error.message);
         } finally {
             setLoading(false);
         }
@@ -104,7 +119,7 @@ const PlaceOrder = () => {
                 <div className="text-xl sm:text-2xl my-3">
                     <Title text1={'DELIVERY'} text2={'INFORMATION'} />
                 </div>
-                <div className="flex gap-3">
+                {/* <div className="flex gap-3">
                     <input 
                         className="border border-gray-300 rounded py-1.5 w-full px-3.5" 
                         type="text" 
@@ -123,8 +138,8 @@ const PlaceOrder = () => {
                         placeholder="Last Name" 
                         required 
                     />
-                </div>
-                <input 
+                </div> */}
+                {/* <input 
                     className="border border-gray-300 rounded py-1.5 w-full px-3.5" 
                     type="email" 
                     name="email"
@@ -132,7 +147,7 @@ const PlaceOrder = () => {
                     onChange={handleChange}
                     placeholder="Email address" 
                     required 
-                />
+                /> */}
                 <input 
                     className="border border-gray-300 rounded py-1.5 w-full px-3.5" 
                     type="text" 
@@ -151,16 +166,16 @@ const PlaceOrder = () => {
                         onChange={handleChange}
                         placeholder="Location" 
                     />
-                    <input 
+                    {/* <input 
                         className="border border-gray-300 rounded py-1.5 w-full px-3.5" 
                         type="text" 
                         name="county"
                         value={formData.county}
                         onChange={handleChange}
                         placeholder="County" 
-                    />
+                    /> */}
                 </div>
-                <div className="flex gap-3">
+                {/* <div className="flex gap-3">
                     <input 
                         className="border border-gray-300 rounded py-1.5 w-full px-3.5" 
                         type="number" 
@@ -177,12 +192,12 @@ const PlaceOrder = () => {
                         onChange={handleChange}
                         placeholder="Country" 
                     />
-                </div>
+                </div> */}
                 <input 
                     className="border border-gray-300 rounded py-1.5 w-full px-3.5" 
                     type="number" 
-                    name="phone"
-                    value={formData.phone}
+                    name="phone_number"
+                    value={formData.phone_number}
                     onChange={handleChange}
                     placeholder="Phone" 
                     required 

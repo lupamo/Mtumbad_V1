@@ -440,6 +440,7 @@ const ShopContextProvider = (props) => {
     updateProfile,
     proceedToCheckout,
     requireAuth,
+    requireAdmin
   };
 
   return (
