@@ -13,8 +13,6 @@ const List = () => {
 	const [filter, setFilter] = useState("");
 	const API_URL = 'http://localhost:8000';
 
-
-	const [list, setList] = useState([]);
 	useEffect(() => {
 		fetchProducts();
 	}, []);
@@ -79,12 +77,12 @@ const List = () => {
 		});
 	};
 
-	const handleEdit = (productId) => {
-		requireAdmin(() => {
-			// Navigate to edit page or open edit modal
-			navigate(`/admin/edit-product/${productId}`);
-		});
-	};
+	// const handleEdit = (productId) => {
+	// 	requireAdmin(() => {
+	// 		// Navigate to edit page or open edit modal
+	// 		navigate(`/admin/edit-product/${productId}`);
+	// 	});
+	// };
 
 	const handleFilterChange = (e) => {
 		setFilter(e.target.value.toLowerCase());
