@@ -50,26 +50,30 @@ const PlaceOrder = () => {
                 return;
             }
     
-            // Make sure all cart items are synced with the server
-            // This is likely missing in your current implementation
-            for (const item of Object.values(cartItems)) {
-                if (item.quantity > 0) {
-                    // Add item to server-side cart
-                    const addToCartResponse = await fetch(`${API_URL}/cart/`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            product_id: item.id,
-                            quantity: item.quantity,
-                            size: item.size || "default"
-                        })
-                    });
+            // Add items from local cart to backend cart first
+            for (const productId in cartItems) {
+                for (const size in cartItems[productId]) {
+                    const quantity = cartItems[productId][size];
                     
-                    if (!addToCartResponse.ok) {
-                        throw new Error("Failed to sync cart with server");
+                    if (quantity > 0) {
+                        // Add item to server-side cart
+                        const addToCartResponse = await fetch(`${API_URL}/cart/`, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                product_id: productId,
+                                quantity: quantity,
+                                size: size
+                            })
+                        });
+                        
+                        if (!addToCartResponse.ok) {
+                            const errorData = await addToCartResponse.json();
+                            throw new Error(errorData.detail || "Failed to sync cart with server");
+                        }
                     }
                 }
             }
@@ -84,7 +88,8 @@ const PlaceOrder = () => {
                 body: JSON.stringify({
                     phone_number: formData.phone_number,
                     location: formData.location,
-                    street: formData.street
+                    street: formData.street,
+                    payment_method: method
                 })
             });
     
