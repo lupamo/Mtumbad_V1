@@ -323,7 +323,48 @@ const ShopContextProvider = (props) => {
       return false;
     }
   };
-
+  // Sync cart with backend
+  const syncCartWithBackend = async () => {
+    try {
+      const token = localStorage.getItem('authtoken') || sessionStorage.getItem('authtoken');
+      
+      if (!token || !isAuthenticated) {
+        return { success: false, error: 'Not authenticated' };
+      }
+      
+      // Add items from local cart to backend cart
+      for (const productId in cartItems) {
+        for (const size in cartItems[productId]) {
+          const quantity = cartItems[productId][size];
+          
+          if (quantity > 0) {
+            const addToCartResponse = await fetch(`${API_URL}/cart/`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                product_id: productId,
+                quantity: quantity,
+                size: size
+              })
+            });
+            
+            if (!addToCartResponse.ok) {
+              const errorData = await addToCartResponse.json();
+              throw new Error(errorData.detail || "Failed to sync cart with server");
+            }
+          }
+        }
+      }
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Error syncing cart with backend:', error);
+      return { success: false, error: error.message };
+    }
+  };
   // Add item to cart
   const addToCart = async (itemId, size) => {
     if (!size) {
@@ -440,7 +481,8 @@ const ShopContextProvider = (props) => {
     updateProfile,
     proceedToCheckout,
     requireAuth,
-    requireAdmin
+    requireAdmin,
+    syncCartWithBackend
   };
 
   return (
