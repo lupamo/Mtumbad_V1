@@ -93,7 +93,7 @@ const Product = () => {
 				}
 			  </div>
 			  <div className="w-full sm:w-[80%]">
-				<img className="w-full h-110" src={image} alt="main" />
+				<img className="w-full h-140" src={image} alt="main" />
 			  </div>
 			</div>
 	
