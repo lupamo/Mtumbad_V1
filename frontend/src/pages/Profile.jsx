@@ -23,7 +23,7 @@ const Profile = () => {
 			// Get the authentication token
 			const token = localStorage.getItem('authtoken') || sessionStorage.getItem('authtoken');
 			
-			const response = await fetch(`http://localhost:8000/orders/user/${currentUser.id}`, {
+			const response = await fetch(`http://localhost:8000/orders/me`, {
 				headers: {
 					'Authorization': `Bearer ${token}`
 				}
@@ -115,7 +115,7 @@ const Profile = () => {
 						</p>
 					  </div>
 					  <button 
-						onClick={() => window.location.href = `/orders/${order.id}`}
+						onClick={() => window.location.href = `http:localhost:8000/orders/${orders.order_id}`}
 						className="border px-4 py-2 text-sm font-medium rounded-sm"
 					  >
 						Track Order

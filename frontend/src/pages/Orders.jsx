@@ -164,7 +164,7 @@ const Orders = () => {
                                 <p className="text-gray-400 text-xs">Product Image</p>
                               </div>
                               <div>
-                                <p className="font-medium">Product ID: {item.product_id}</p>
+                                <p className="font-medium">Product Name: {item.name}</p>
                                 <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
                                 <p className="text-sm text-gray-600">Price per unit: {currency}{item.price}</p>
                               </div>
