@@ -88,6 +88,23 @@ async def get_order_items(order_id: str, session: Session = Depends(get_session)
         product_id = session.query(Product).filter(Product.id == order_item.product_id).first().id
         order_item.image_urls = [image.image_url for image in session.query(ProductImage)
                                      .filter(ProductImage.product_id == product_id).all()]
+        order_item.product_name = session.query(Product).filter(Product.id == product_id).first().name
+    return order_items
+
+
+@order_router.get("/{order_id}/items/me")
+async def get_order_items(
+    order_id: str,
+    credentials: HTTPBasicCredentials = Depends(security),
+    session: Session = Depends(get_session)
+    ):
+    user = AuthHandler().get_current_user(session, credentials.credentials)
+    order_items = session.query(OrderItem).filter(OrderItem.order_id == order_id).all()
+    for order_item in order_items:
+        product_id = session.query(Product).filter(Product.id == order_item.product_id).first().id
+        order_item.image_urls = [image.image_url for image in session.query(ProductImage)
+                                     .filter(ProductImage.product_id == product_id).all()]
+        order_item.product_name = session.query(Product).filter(Product.id == product_id).first().name
     return order_items
 
 
