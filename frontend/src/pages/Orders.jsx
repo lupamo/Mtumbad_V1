@@ -6,19 +6,19 @@ import { toast } from 'react-toastify';
 const API_URL = 'http://localhost:8000'; // Fixed the URL
 
 const Orders = () => {
-    const { currency, requireAuth, currentUser } = useContext(ShopContext);
+    const { currency, isAuthenticated } = useContext(ShopContext);
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [expandedOrderId, setExpandedOrderId] = useState(null);
   
     useEffect(() => {
         // Check if user is authenticated before fetching orders
-        requireAuth(() => {
-            if (currentUser && currentUser.id) {
-                fetchOrders();
-            }
-        });
-    }, [currentUser]); // Add currentUser as dependency
+        if (isAuthenticated) {
+          fetchOrders();
+        } else {
+          setLoading(false);
+        }
+    }, [isAuthenticated]);
   
     const fetchOrders = async () => {
         try {
@@ -31,17 +31,10 @@ const Orders = () => {
                 return;
             }
 
-            // Use the userId from currentUser context instead of email
-            if (!currentUser || !currentUser.id) {
-                toast.error("User information not found");
-                setLoading(false);
-                return;
-            }
-            
-            const response = await fetch(`${API_URL}/orders/user/${currentUser.id}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+            const response = await fetch(`${API_URL}/orders/me`, {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
             });
             
             if (!response.ok) {
