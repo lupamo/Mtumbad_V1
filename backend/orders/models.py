@@ -12,6 +12,8 @@ class Order(BaseModel):
     location = Column(String(256))
     phone_number = Column(String(256))
     street = Column(String(256))
+    first_name = Column(String(256))
+    last_name = Column(String(256))
 
     # Relationships
     user = relationship("User", back_populates="orders")
