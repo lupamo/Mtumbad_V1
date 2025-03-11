@@ -6,19 +6,19 @@ import { toast } from 'react-toastify';
 const API_URL = 'http://localhost:8000'; // Fixed the URL
 
 const Orders = () => {
-    const { currency, requireAuth, currentUser } = useContext(ShopContext);
+    const { currency, isAuthenticated } = useContext(ShopContext);
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [expandedOrderId, setExpandedOrderId] = useState(null);
   
     useEffect(() => {
         // Check if user is authenticated before fetching orders
-        requireAuth(() => {
-            if (currentUser && currentUser.id) {
-                fetchOrders();
-            }
-        });
-    }, [currentUser]); // Add currentUser as dependency
+        if (isAuthenticated) {
+          fetchOrders();
+        } else {
+          setLoading(false);
+        }
+    }, [isAuthenticated]);
   
     const fetchOrders = async () => {
         try {
@@ -31,17 +31,10 @@ const Orders = () => {
                 return;
             }
 
-            // Use the userId from currentUser context instead of email
-            if (!currentUser || !currentUser.id) {
-                toast.error("User information not found");
-                setLoading(false);
-                return;
-            }
-            
-            const response = await fetch(`${API_URL}/orders/user/${currentUser.id}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+            const response = await fetch(`${API_URL}/orders/me`, {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
             });
             
             if (!response.ok) {
@@ -49,6 +42,7 @@ const Orders = () => {
             }
             
             const data = await response.json();
+            // console.log(data);
             setOrders(data);
         } catch (error) {
             console.error('Error fetching orders:', error);
@@ -73,7 +67,7 @@ const Orders = () => {
             }
             
             const items = await response.json();
-            
+            console.log(items);
             setOrders(prevOrders => 
                 prevOrders.map(order => 
                     order.id === orderId ? { ...order, order_items: items } : order
@@ -168,10 +162,10 @@ const Orders = () => {
                           <div key={item.id} className="border-b pb-4 flex flex-col sm:flex-row justify-between">
                             <div className="flex items-start gap-4">
                               <div className="w-16 h-16 bg-gray-100 flex items-center justify-center">
-                                <p className="text-gray-400 text-xs">Product Image</p>
+                                <img src={item.image_urls[0]} alt="print_thumbnail" />
                               </div>
                               <div>
-                                <p className="font-medium">Product ID: {item.product_id}</p>
+                                <p className="font-medium">Product Name: {item.product_name}</p>
                                 <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
                                 <p className="text-sm text-gray-600">Price per unit: {currency}{item.price}</p>
                               </div>
