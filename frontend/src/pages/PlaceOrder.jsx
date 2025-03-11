@@ -12,7 +12,8 @@ const PlaceOrder = () => {
     const { navigate, cartItems, getCartAmount, getCartCount, delivery_fee } = useContext(ShopContext);
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
-        
+        firstName: '',
+        lastName: '',
         street: '',
         location: '',
         phone_number: ''
@@ -28,7 +29,7 @@ const PlaceOrder = () => {
 
     const handleCheckout = async () => {
         // Basic validation
-        if (!formData.email || formData.firstName || formData.lastName || !formData.street || !formData.location || !formData.phone_number) {
+        if (!formData.firstName || !formData.lastName || !formData.street || !formData.location || !formData.phone_number) {
             toast.error("Please fill in all required fields");
             return;
         }
@@ -86,6 +87,8 @@ const PlaceOrder = () => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
+                    first_name: formData.firstName,
+                    last_name: formData.lastName,
                     phone_number: formData.phone_number,
                     location: formData.location,
                     street: formData.street,
@@ -144,7 +147,7 @@ const PlaceOrder = () => {
                         required 
                     />
                 </div>
-                <input 
+                {/* <input 
                     className="border border-gray-300 rounded py-1.5 w-full px-3.5" 
                     type="email" 
                     name="email"
@@ -152,7 +155,7 @@ const PlaceOrder = () => {
                     onChange={handleChange}
                     placeholder="Email address" 
                     required 
-                /> 
+                />  */}
                 <input 
                     className="border border-gray-300 rounded py-1.5 w-full px-3.5" 
                     type="text" 
