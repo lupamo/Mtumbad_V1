@@ -28,7 +28,7 @@ const PlaceOrder = () => {
 
     const handleCheckout = async () => {
         // Basic validation
-        if (!formData.street || !formData.location || !formData.phone_number) {
+        if (!formData.email || formData.firstName || formData.lastName || !formData.street || !formData.location || !formData.phone_number) {
             toast.error("Please fill in all required fields");
             return;
         }
@@ -124,7 +124,7 @@ const PlaceOrder = () => {
                 <div className="text-xl sm:text-2xl my-3">
                     <Title text1={'DELIVERY'} text2={'INFORMATION'} />
                 </div>
-                {/* <div className="flex gap-3">
+                <div className="flex gap-3">
                     <input 
                         className="border border-gray-300 rounded py-1.5 w-full px-3.5" 
                         type="text" 
@@ -143,8 +143,8 @@ const PlaceOrder = () => {
                         placeholder="Last Name" 
                         required 
                     />
-                </div> */}
-                {/* <input 
+                </div>
+                <input 
                     className="border border-gray-300 rounded py-1.5 w-full px-3.5" 
                     type="email" 
                     name="email"
@@ -152,7 +152,7 @@ const PlaceOrder = () => {
                     onChange={handleChange}
                     placeholder="Email address" 
                     required 
-                /> */}
+                /> 
                 <input 
                     className="border border-gray-300 rounded py-1.5 w-full px-3.5" 
                     type="text" 

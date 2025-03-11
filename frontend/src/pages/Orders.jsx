@@ -42,6 +42,7 @@ const Orders = () => {
             }
             
             const data = await response.json();
+            // console.log(data);
             setOrders(data);
         } catch (error) {
             console.error('Error fetching orders:', error);
@@ -66,7 +67,7 @@ const Orders = () => {
             }
             
             const items = await response.json();
-            
+            console.log(items);
             setOrders(prevOrders => 
                 prevOrders.map(order => 
                     order.id === orderId ? { ...order, order_items: items } : order
@@ -161,10 +162,10 @@ const Orders = () => {
                           <div key={item.id} className="border-b pb-4 flex flex-col sm:flex-row justify-between">
                             <div className="flex items-start gap-4">
                               <div className="w-16 h-16 bg-gray-100 flex items-center justify-center">
-                                <p className="text-gray-400 text-xs">Product Image</p>
+                                <img src={item.image_urls[0]} alt="print_thumbnail" />
                               </div>
                               <div>
-                                <p className="font-medium">Product Name: {item.name}</p>
+                                <p className="font-medium">Product Name: {item.product_name}</p>
                                 <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
                                 <p className="text-sm text-gray-600">Price per unit: {currency}{item.price}</p>
                               </div>
