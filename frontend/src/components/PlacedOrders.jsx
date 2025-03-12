@@ -97,9 +97,7 @@ const PlacedOrders = () => {
       if (!response.ok) {
         throw new Error('Failed to update order status');
       }
-      
       const updatedOrder = await response.json();
-      
       setOrders(prevOrders => 
         prevOrders.map(order => 
           order.id === orderId ? { ...order, status: updatedOrder.status } : order
@@ -133,7 +131,7 @@ const PlacedOrders = () => {
   }
 
   return (
-    <div className="bg-white rounded shadow-sm p-6">
+    <div className="bg-white w-full rounded shadow-sm p-6">
       <h2 className="text-2xl font-bold mb-6">Customer Orders</h2>
       
       {orders.length === 0 ? (
@@ -209,7 +207,7 @@ const PlacedOrders = () => {
                     </td>
                   </tr>
                   {expandedOrderId === order.id && (
-                    <tr className="bg-gray-50">
+                    <tr className="bg-green-50">
                       <td colSpan="6" className="py-3 px-6">
                         <div className="border-t border-gray-200 pt-3">
                           <h4 className="font-medium mb-2">Order Items</h4>
