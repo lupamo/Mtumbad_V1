@@ -34,7 +34,6 @@ const Profile = () => {
 			}
 
 			const data = await response.json();
-			console.log(data);
 			setOrders(Array.isArray(data) ? data : []);
 			setLoading(false);
 		} catch (err) {

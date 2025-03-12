@@ -28,7 +28,7 @@ const Admin = () => {
 			<hr />
 			<div className="flex w-full">
 				<AdminSidebar setActiveComponent={setActiveComponent} activeComponent={activeComponent} />
-				<div className="w-[70%] mx-auto ml-[max(5vw, 25px)] my-8 text-gray-600 text-base">
+				<div className="w-[100%] mx-auto ml-[max(5vw, 25px)] my-8 text-gray-600 text-base">
 					{renderComponent()}
 				</div>
 
