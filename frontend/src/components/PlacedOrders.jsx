@@ -97,7 +97,9 @@ const PlacedOrders = () => {
       if (!response.ok) {
         throw new Error('Failed to update order status');
       }
+      
       const updatedOrder = await response.json();
+      
       setOrders(prevOrders => 
         prevOrders.map(order => 
           order.id === orderId ? { ...order, status: updatedOrder.status } : order
@@ -131,7 +133,7 @@ const PlacedOrders = () => {
   }
 
   return (
-    <div className="bg-white w-full rounded shadow-sm p-6">
+    <div className="bg-white rounded shadow-sm p-6">
       <h2 className="text-2xl font-bold mb-6">Customer Orders</h2>
       
       {orders.length === 0 ? (
@@ -142,7 +144,7 @@ const PlacedOrders = () => {
             <thead>
               <tr className="bg-gray-100 text-gray-700 uppercase text-sm leading-normal">
                 <th className="py-3 px-6 text-left">Order ID</th>
-                <th className="py-3 px-6 text-left">User</th>
+                <th className="py-3 px-6 text-left">Customer</th>
                 <th className="py-3 px-6 text-left">Date</th>
                 <th className="py-3 px-6 text-right">Total</th>
                 <th className="py-3 px-6 text-center">Status</th>
@@ -157,7 +159,7 @@ const PlacedOrders = () => {
                       <span className="font-medium">{order.id}</span>
                     </td>
                     <td className="py-3 px-6 text-left">
-                      {order.user_id}
+                      {order.username || order.user_id}
                     </td>
                     <td className="py-3 px-6 text-left">
                       {formatDate(order.created_at)}
@@ -207,7 +209,7 @@ const PlacedOrders = () => {
                     </td>
                   </tr>
                   {expandedOrderId === order.id && (
-                    <tr className="bg-green-50">
+                    <tr className="bg-gray-50">
                       <td colSpan="6" className="py-3 px-6">
                         <div className="border-t border-gray-200 pt-3">
                           <h4 className="font-medium mb-2">Order Items</h4>
@@ -216,8 +218,8 @@ const PlacedOrders = () => {
                               {order.orderItems.map((item) => (
                                 <div key={item.id} className="border rounded p-3 bg-white text-sm">
                                   <div className="flex justify-between mb-1">
-                                    <span className="font-medium">Product ID:</span>
-                                    <span>{item.product_id}</span>
+                                    <span className="font-medium">Product:</span>
+                                    <span>{item.product_name || item.product_id}</span>
                                   </div>
                                   <div className="flex justify-between mb-1">
                                     <span className="font-medium">Quantity:</span>
