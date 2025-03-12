@@ -85,13 +85,12 @@ const PlacedOrders = () => {
     try {
       const token = localStorage.getItem('authtoken') || sessionStorage.getItem('authtoken');
       
-      const response = await fetch(`${API_URL}/orders/${orderId}`, {
+      // Updated to send status as a query parameter
+      const response = await fetch(`${API_URL}/orders/${orderId}?status=${newStatus}`, {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ status: newStatus })
+          'Authorization': `Bearer ${token}`
+        }
       });
       
       if (!response.ok) {
@@ -172,6 +171,8 @@ const PlacedOrders = () => {
                       <span className={`py-1 px-3 rounded-full text-xs ${
                         order.status === 'completed' ? 'bg-green-200 text-green-700' :
                         order.status === 'canceled' ? 'bg-red-200 text-red-700' :
+                        order.status === 'shipped' ? 'bg-blue-200 text-blue-700' :
+                        order.status === 'processing' ? 'bg-purple-200 text-purple-700' :
                         'bg-yellow-200 text-yellow-700'
                       }`}>
                         {order.status}
@@ -251,6 +252,8 @@ const PlacedOrders = () => {
                                 <span className={`py-0.5 px-2 rounded-full text-xs ${
                                   order.status === 'completed' ? 'bg-green-200 text-green-700' :
                                   order.status === 'canceled' ? 'bg-red-200 text-red-700' :
+                                  order.status === 'shipped' ? 'bg-blue-200 text-blue-700' :
+                                  order.status === 'processing' ? 'bg-purple-200 text-purple-700' :
                                   'bg-yellow-200 text-yellow-700'
                                 }`}>
                                   {order.status}
