@@ -159,7 +159,8 @@ const PlacedOrders = () => {
                       <span className="font-medium">{order.id}</span>
                     </td>
                     <td className="py-3 px-6 text-left">
-                      {order.username || order.user_id}
+                      {order.username || (order.first_name && order.last_name ? 
+                        `${order.first_name} ${order.last_name}` : order.user_id)}
                     </td>
                     <td className="py-3 px-6 text-left">
                       {formatDate(order.created_at)}
@@ -211,12 +212,74 @@ const PlacedOrders = () => {
                   {expandedOrderId === order.id && (
                     <tr className="bg-gray-50">
                       <td colSpan="6" className="py-3 px-6">
+                        {/* Customer Details Section */}
+                        <div className="border-t border-gray-200 pt-3 mb-4">
+                          <h4 className="font-medium mb-2">Customer Details</h4>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                            <div className="border rounded p-3 bg-white text-sm">
+                              <div className="font-medium mb-1 text-gray-700">Contact Information</div>
+                              <div className="mb-1">
+                                <span className="font-medium">Name:</span>{" "}
+                                {order.first_name && order.last_name ? 
+                                  `${order.first_name} ${order.last_name}` : 
+                                  (order.username || "Not provided")}
+                              </div>
+                              <div className="mb-1">
+                                <span className="font-medium">Phone:</span>{" "}
+                                {order.phone_number || "Not provided"}
+                              </div>
+                            </div>
+                            <div className="border rounded p-3 bg-white text-sm">
+                              <div className="font-medium mb-1 text-gray-700">Shipping Address</div>
+                              <div className="mb-1">
+                                <span className="font-medium">Location:</span>{" "}
+                                {order.location || "Not provided"}
+                              </div>
+                              <div className="mb-1">
+                                <span className="font-medium">Street:</span>{" "}
+                                {order.street || "Not provided"}
+                              </div>
+                            </div>
+                            <div className="border rounded p-3 bg-white text-sm">
+                              <div className="font-medium mb-1 text-gray-700">Order Summary</div>
+                              <div className="mb-1">
+                                <span className="font-medium">Total:</span>{" "}
+                                Kshs {order.total?.toFixed(2) || "0.00"}
+                              </div>
+                              <div className="mb-1">
+                                <span className="font-medium">Status:</span>{" "}
+                                <span className={`py-0.5 px-2 rounded-full text-xs ${
+                                  order.status === 'completed' ? 'bg-green-200 text-green-700' :
+                                  order.status === 'canceled' ? 'bg-red-200 text-red-700' :
+                                  'bg-yellow-200 text-yellow-700'
+                                }`}>
+                                  {order.status}
+                                </span>
+                              </div>
+                              <div className="mb-1">
+                                <span className="font-medium">Date:</span>{" "}
+                                {formatDate(order.created_at)}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Order Items Section */}
                         <div className="border-t border-gray-200 pt-3">
                           <h4 className="font-medium mb-2">Order Items</h4>
                           {order.orderItems ? (
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                               {order.orderItems.map((item) => (
                                 <div key={item.id} className="border rounded p-3 bg-white text-sm">
+                                  {item.image_urls && item.image_urls.length > 0 && (
+                                    <div className="mb-2">
+                                      <img 
+                                        src={item.image_urls[0]} 
+                                        alt={item.product_name || "Product"} 
+                                        className="h-20 w-20 object-cover mx-auto"
+                                      />
+                                    </div>
+                                  )}
                                   <div className="flex justify-between mb-1">
                                     <span className="font-medium">Product:</span>
                                     <span>{item.product_name || item.product_id}</span>
